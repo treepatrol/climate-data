@@ -37,7 +37,7 @@ library(lubridate)
 #prism_data_path <- "../prism_data/"
 
 # Alternatively, we might connect to a shared drive where we (or someone) already downloaded and stored the relevant PRISM data. In that case we would set the data path to point to that location instead. 
-prism_data_path <- "/Users/latimer/Google Drive/My Drive/Cones/GeoData/prism_data/" # or whatever the path is on your computer!
+prism_data_path <- "/Users/jennifercribbs/Documents/TreePatrol.org/Analysis/Data/prism_data" # or whatever the path is on your computer!
 
 # Download the climate layers we want from PRISM 
 #   (assuming it's not already stored on Box or somewhere else!)
@@ -50,12 +50,12 @@ prism_set_dl_dir(prism_data_path)
 #get_prism_normals("ppt", keepZip = FALSE, resolution = "800m")
 
 # Download annual data
-get_prism_annual("tmean", years = 1993:2023, keepZip = FALSE)
-get_prism_annual("ppt", years = 1993:2023, keepZip = FALSE)
+#get_prism_annual("tmean", years = 1993:2023, keepZip = FALSE)
+#get_prism_annual("ppt", years = 1993:2023, keepZip = FALSE)
 
 # Download monthly data
-get_prism_monthlys("tmean", years = 1993:2023, mon = 1:12, keepZip = FALSE)
-get_prism_monthlys("ppt", years = 1993:2023, mon = 1:12, keepZip = FALSE)
+#get_prism_monthlys("tmean", years = 1993:2023, mon = 1:12, keepZip = FALSE)
+#get_prism_monthlys("ppt", years = 1993:2023, mon = 1:12, keepZip = FALSE)
 
 # Check on those files that we downloaded and see what's there
 list.files(prism_data_path) %>%
@@ -64,7 +64,7 @@ list.files(prism_data_path, recursive = TRUE) %>%
   head(30)
 # Look at a the first available file as a raster 
 testfile_name <- list.files(prism_data_path, recursive = TRUE)[1]
-example_raster <- rast(paste0(prism_data_path, testfile_name))
+example_raster <- rast(file.path(prism_data_path, testfile_name))
 plot(example_raster)
 
 
@@ -87,9 +87,9 @@ focal_site <- c(-118.990280, 37.592576)
 # focal_centroid <- plss_reproj %>% filter(Township == "T24N" & Range == "R10E" & Section == 24) %>% st_centroid()
 # focal_site <- st_coordinates(focal_centroid$geometry)
 
-# Extract annual tmean data for the location using the prism library's slice function
-focal_data_tmean <- prism_archive_subset("tmean", "annual", years = 1993:2023)
-tmean_plot <- pd_plot_slice(focal_data_tmean, focal_site) # This function returns a bunch of stuff but what we want is the $data component 
+# Extract annual precipitation data for the location using the prism library's slice function
+focal_data_ppt <- prism_archive_subset("ppt", "annual", years = 1993:2023)
+ppt_plot <- pd_plot_slice(focal_data_ppt, focal_site) # This function returns a bunch of stuff but what we want is the $data component 
 
 # To get water year precipitation, instead of calendar year, we have to grab the monthly data instead and do some mutating
 focal_data_ppt <- prism_archive_subset("ppt", "monthly", years = 1993:2023)
