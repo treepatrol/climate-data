@@ -2,11 +2,12 @@
 # 19 June 2025
 # Author: Jenny Cribbs
 
-# Inputs: tree data from SEKI data entry (can direclty import GPS coordinates later)
+# Inputs: tree data from SEKI data entry (can directly import GPS coordinates later)
 
 # Code Description: (1) calculate tree position based on plot beginning, dOut, and dSide (2) choose GPS or relative position if some trees have both (preference will be evaluated on a plot by plot basis) (3) visualize result (4) convert all points to decimal degrees. 
 
-# Output: (1) a csv file with lat/long coordinates for each plot beginning and end point. (2) a csv file with lat/long coordinates for each tree.
+# Outputs: (1) a csv file with lat/long coordinates for each plot beginning and end point. (2) a csv file with lat/long coordinates for each tree.
+# Desired output should eventually be a CSV or use RPostgres to direcly populate relational database
 
 library(tidyverse)
 library(terra)
@@ -20,7 +21,6 @@ library(writexl)
 
 # Set the working directory
 setwd("/Users/jennifercribbs/Documents/R-Projects/climate-data")
-#setwd("/Users/tazli/Downloads/YOSE_SugarPine/MultipleDisturbances")
 
 # load user defined functions relativeTreeCalculation and calculateTreePositions by running 0_TreePositionCalculationFunctions.R first
 source("/Users/jennifercribbs/Documents/R-Projects/MultipleDisturbances/Scripts/UnderstoryCleaning/0_TreePositionCalculationFunctions.R")
@@ -28,12 +28,17 @@ source("/Users/jennifercribbs/Documents/R-Projects/MultipleDisturbances/Scripts/
 # read in SEKI data
 
 # plot data
-plots <- read_csv('/Users/jennifercribbs/Documents/R-Projects/MultipleDisturbances/dataSandbox/SEKI_2024_PlotData - PlotData.csv')
+plots <- read_csv('/Users/jennifercribbs/Documents/TreePatrol.org/Analysis/SEKIanalysis/SEKI_all_PlotData_20250821.csv')
 
 # tree data
-trees <- read_csv('/Users/jennifercribbs/Documents/R-Projects/MultipleDisturbances/dataSandbox/SEKI_2024_TreeFieldData - Sheet1.csv')
+trees2024 <- read_csv('/Users/jennifercribbs/Documents/R-Projects/MultipleDisturbances/dataSandbox/SEKI_2024_TreeFieldData - Sheet1.csv')
 
-resinCount <- read_csv("/Users/jennifercribbs/Documents/SEKI_beetles/ResinDuctRoughCount_SEKI2021.csv")
+trees2022 <- read_csv('/Users/jennifercribbs/Documents/SEKI_beetles/Data/Beetles Project Tree Data - Sheet1.csv')
+
+# select and re-order columns for database, rename using snake case
+trees2022 <- select(Plot, )
+
+#resinCount <- read_csv("/Users/jennifercribbs/Documents/SEKI_beetles/ResinDuctRoughCount_SEKI2021.csv")
 # change dOut_m to numeric (no NAs introduced)
 #pilas$dOut_m <- as.numeric(pilas$dOut_m)
 
