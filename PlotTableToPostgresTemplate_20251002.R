@@ -1,5 +1,5 @@
 # ===============================
-# Clean & Export Plot Table to PostgresSQL Database
+# Clean & Export Plot Table to PostgresSQL Database (Static Plot + Plot Visit Tables)
 # ===============================
 
 # load required packages
@@ -28,13 +28,44 @@ df <- raw %>%
 plots <- df %>%
   transmute(
     plot_name,         
-    site_id              = 1,
-    #plot_route,
-    #waypoint_number_beg  = paste(gps, waypoint_number_beg, sep = "_"),
+    site_id = 1,
+    plot_route,
+    target_species_id
+  )
+
+# ---- Step 4: dynamic plot visit table columns ----
+# select only the columns needed for the dynamic plot table
+# rename them to match schema, and order correctly 
+plot_visit <- df %>%
+  transmute(
+    plot_id,         
+    visit_date = lubridate::make_date(year, month, day),
+    crew,
+    transect_length_m,
+    transect_field_width_m,
+    #azimuth,
+    slope_beg,
+    slope_end,
+    aspect_beg,
+    aspect_end,
+    soil_types,
+    percent_rock,
+    alternate_hosts,
+    general_plot_notes = general_plot_observations,
+    general_vegetation_notes = general_vegetation_observations
+    # geom will be added later in PostGIS or R sf
+  )
+
+plots <- df %>%
+  transmute(
+    plot_name,         
+    site_id = 1,
+    plot_route,
+    waypoint_number_beg = paste(gps, waypoint_number_beg, sep = "_"),
     beg_northing,
     beg_easting,
-    #beg_accuracy_ft,
-    #waypoint_number_end  = paste(gps, waypoint_number_end, sep = "_"),
+    beg_accuracy_ft,
+    waypoint_number_end  = paste(gps, waypoint_number_end, sep = "_"),
     end_northing,
     end_easting,
     #end_accuracy_ft      = end_accuracy,
@@ -72,32 +103,8 @@ plots <- plots %>%
     # Compute design area 
     design_area_m2 = case_when(
       !is.na(transect_length_m) & !is.na(transect_width_m) ~ transect_length_m * transect_width_m, 
-TRUE ~ NA_real_
+      TRUE ~ NA_real_
     )
-    )
-
-# ---- Step 4: dynamic plot table columns ----
-# select only the columns needed for the dynamic plot table
-# rename them to match schema, and order correctly 
-plot_visit <- df %>%
-  transmute(
-    # match schema order exactly 
-    plot_id,         
-    visit_date = lubridate::make_date(year, month, day),
-    crew,
-    transect_length_m,
-    transect_field_width_m,
-    #azimuth,
-    slope_beg,
-    slope_end,
-    aspect_beg,
-    aspect_end,
-    soil_types,
-    percent_rock,
-    alternate_hosts,
-    general_plot_notes = general_plot_observations,
-    general_vegetation_notes = general_vegetation_observations
-    # geom will be added later in PostGIS or R sf
   )
 
 # ---- Step 4: Write clean CSVs ----
