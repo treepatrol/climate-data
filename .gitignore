@@ -49,4 +49,7 @@ po/*~
 rsconnect/
 
 # Raw data files 
-/raw-data/
+raw-data/
+data/
+
+*.DS_Store
