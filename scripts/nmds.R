@@ -1,4 +1,4 @@
-
+# load packages
 library(readxl)
 library(purrr)
 library(dplyr)
@@ -47,7 +47,6 @@ veg <- veg %>% mutate(
   percentCover = as.numeric(percentCover)
 )
 
-
 # plots with duplicate entries PIMO8a (7) and PIMO6a (1)
 # Ultimately need to fix this issue not remove
 
@@ -66,14 +65,13 @@ veg_clean <- veg_clean %>%
   group_by(plotID, species) %>%
   summarise(percentCover = max(percentCover), .groups = "drop")
 
-# build species matrix
+# build community species matrix
 comm <- veg_clean %>%
   tidyr::pivot_wider(
     names_from = species,
     values_from = percentCover,
     values_fill = 0
   )
-
 
 # NMDS
 library(vegan)
